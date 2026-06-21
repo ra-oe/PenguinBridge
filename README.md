@@ -1,5 +1,5 @@
 # PenguinBridge
-
+Note: this README was made by Copilot because i was too lazy to make my own 
 A tiny bridge between Python and PenguinMod. Run a small Python server and let PenguinMod send named broadcasts to your Python code - great for quick tooling, prototypes, or adding simple GUI hooks.
 
 Status: WIP
