@@ -11,20 +11,60 @@ Status: WIP
 - Lets you register Python functions as handlers for named events.
 - Has a catch-all handler for dynamic messages.
 - Plays nice with any Python GUI (pywebview, pygame, tkinter, etc).
+- Includes the PenguinMod extension `PenguinBridge.js` in this repo for easy loading.
 
 ---
 
 ## Quick demo
 1. Run `PenguinBridgeServer.py`.
-2. Load `PenguinBridge.js` in PenguinMod (or your self-hosted editor).
+2. Load `PenguinBridge.js` in PenguinMod from this repo, or copy it into the editor.
 3. Send broadcasts from the editor - your Python handlers will get them.
 
 ---
 
-## Requirements
-- Python 3.8+
-- No external services needed; communication happens over a local port (default: 6035).
-- If you want, I can add `requirements.txt` for dependencies.
+## Where the extension lives
+The PenguinMod extension is at `PenguinBridge.js` in this repository. It talks to the Python server at `http://127.0.0.1:6035` by default.
+
+If you want to load it directly from GitHub, use the raw file URL in the editor's extension import field. For example:
+
+```
+https://raw.githubusercontent.com/ra-oe/PenguinBridge/main/PenguinBridge.js
+```
+
+---
+
+## How the included extension works (short)
+- It polls the Python server every 100 ms at `/poll` for events emitted by Python.
+- It can POST broadcasts from the editor to Python at `/broadcast` with JSON body `{ broadcast: string, data: any }`.
+- It exposes a few blocks in the editor:
+  - Commands to send broadcasts to Python: `broadcast [BROADCAST_NAME] to Python` and `broadcast [BROADCAST_NAME] with data [DATA] to Python`.
+  - Hat blocks to receive Python-to-editor broadcasts: `when Python broadcast [EVENT] received` and `when any Python broadcast received`.
+  - Reporters: `last Python broadcast event`, `last Python broadcast data`, and `data for Python broadcast [EVENT]`.
+  - A command to change the server address: `set Python server address to [URL]`.
+
+Because the extension polls, you do not need a persistent WebSocket connection. If you want lower latency you can modify the extension to use WebSockets and update the server.
+
+---
+
+## Example usage from your own JS code
+If you want to trigger Python directly from a script, here is what the extension does under the hood:
+
+```js
+fetch("http://127.0.0.1:6035/broadcast", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ broadcast: "close_window", data: { reason: "user" } })
+});
+```
+
+And the server's `/poll` endpoint returns a JSON array of events like:
+
+```json
+[
+  { "event": "welcome_message", "data": "hello" },
+  { "event": "score_update", "data": { "score": 42 } }
+]
+```
 
 ---
 
@@ -66,33 +106,12 @@ Notes:
 
 ---
 
-## How it works (short)
-PenguinMod's JS extension connects to a local endpoint and posts named events + payloads. PenguinBridge dispatches those to the handler you registered in Python (either a specific event handler or the catch-all).
-
----
-
 ## API (summary)
 - PenguinBridge(port=6035, host="127.0.0.1") - create an instance.
 - bridge.on(event_name)(func) - register handler for a named event.
 - bridge.on_any(func) - register a catch-all handler; func signature: (name, data).
 - bridge.start() - start the server.
 - bridge.stop() - stop the server.
-
-If you want, I can pull exact function signatures from the code and add them here.
-
----
-
-## Example PenguinMod snippet
-Adjust this to match your extension:
-
-```js
-// PenguinBridge.js
-fetch("http://127.0.0.1:6035/broadcast", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ name: "close_window", data: { reason: "user" } })
-});
-```
 
 ---
 
@@ -104,10 +123,9 @@ fetch("http://127.0.0.1:6035/broadcast", {
 ---
 
 ## Contributing
-Pull requests and issues welcome. If you want, I can:
-- Commit this README update
+Pull requests and issues welcome. I can also:
 - Add a CONTRIBUTING.md
-- Add a simple requirements.txt and a tiny example repo
+- Add a simple requirements.txt and a tiny example project
 
 ---
 
