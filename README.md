@@ -10,7 +10,7 @@ If you want to see how it works, you can just run `PenguinBridgeServer.py` and i
 If you wanna develop using it (cause why not and its *cool*) you gotta save `PenguinBridgeServer.py` in the same directory of your code and import it. Here's an example with *comments*:
 ```python
 import pywebview # (or Pygame, tkinter, etc.)
-from penguin_bridge import PenguinBridge
+from PenguinBridgeServer import PenguinBridge
 
 # 1. Create instance
 bridge = PenguinBridge(port=6035)
