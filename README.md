@@ -2,9 +2,9 @@
 Note: this README was made by Copilot because i was too lazy to make my own right now so yea also it might be wrong because its retarded
 ----
 A tiny bridge between Python and PenguinMod. Run a small Python server and let PenguinMod send named broadcasts to your Python code - great for quick tooling, prototypes, or adding simple GUI hooks.
+Work in progress.
 
-Status: WIP
-
+[JOIN MY DISCORD RIGHT NOW: https://discord.gg/mfmjRW7XTm](https://discord.gg/mfmjRW7XTm)
 ---
 
 ## What it does
